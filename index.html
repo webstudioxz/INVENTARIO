@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>IPV Auditoría · Sistema de Ventas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <!-- PWA MANIFEST -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-152x152.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="IPV Auditoría">
+  <meta name="theme-color" content="#1E90FF">
+  
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    :root {
+      --bg-base: #080c14;
+      --bg-surface: #0e1420;
+      --bg-elevated: #141c2e;
+      --bg-hover: #1a2438;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-accent: rgba(99, 179, 237, 0.25);
+      --text-primary: #e8edf7;
+      --text-secondary: #8896b3;
+      --text-muted: #4a5568;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --accent-bright: #60a5fa;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --danger: #f43f5e;
+      --danger-bg: rgba(244, 63, 94, 0.1);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.1);
+      --gold: #f59e0b;
+      --purple: #8b5cf6;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+      --shadow-accent: 0 0 24px rgba(59, 130, 246, 0.12);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 99px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--bg-elevated) 0%, rgba(20, 28, 46, 0.9) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 20px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .header h1 {
+      font-family: var(--font-head);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .header-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      border-color: var(--border-accent);
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    .pill.accent {
+      background: var(--accent-glow);
+      border-color: var(--border-accent);
+      color: var(--accent-bright);
+    }
+
+    .pill.expired {
+      background: var(--danger-bg);
+      border-color: rgba(244, 63, 94, 0.3);
+      color: #fb7185;
+    }
+
+    .pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s infinite;
+    }
+    
+    .btn-logout {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #fb7185;
+    }
+    .btn-logout:hover {
+      background: rgba(244, 63, 94, 0.25);
+      border-color: rgba(244, 63, 94, 0.5);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-md);
+      border: none;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: var(--text-primary);
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: rgba(244, 63, 94, 0.2);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+
+    .btn-lg {
+      padding: 12px 24px;
+      font-size: 0.95rem;
+    }
+
+    .btn-icon {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .card-elevated {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .stat-card:hover::after {
+      opacity: 1;
+    }
+
+    .stat-card.featured {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .stat-card.featured::after {
+      opacity: 1;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+    }
+
+    .stat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+    }
+
+    .stat-icon.blue {
+      background: var(--accent-glow);
+      color: var(--accent-bright);
+    }
+
+    .stat-icon.green {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .stat-icon.red {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .stat-icon.yellow {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .stat-icon.purple {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--purple);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-family: var(--font-head);
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .stat-value.green {
+      color: var(--success);
+    }
+
+    .stat-value.red {
+      color: var(--danger);
+    }
+
+    .stat-value.blue {
+      color: var(--accent-bright);
+    }
+
+    .tabs-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 6px;
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-secondary);
+      background: var(--bg-hover);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn.active i {
+      color: var(--accent-bright);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--bg-elevated);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.875rem;
+      vertical-align: middle;
+      color: var(--text-secondary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr {
+      transition: background 0.12s;
+    }
+
+    tbody tr:hover td {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .input-mini {
+      width: 72px;
+      padding: 6px 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .input-mini:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+      background: var(--bg-hover);
+    }
+
+    .input-wide {
+      width: 130px;
+      padding: 6px 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      transition: all 0.15s;
+    }
+
+    .input-wide:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      transition: all 0.15s;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+      outline: none;
+    }
+
+    .form-control::placeholder {
+      color: var(--text-muted);
+    }
+
+    select.form-control,
+    select.input-mini,
+    select.input-wide {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 7px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .form-row > * {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-elevated);
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title i {
+      color: var(--accent-bright);
+      font-size: 0.85rem;
+    }
+
+    .chart-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .chart-body {
+      padding: 20px;
+      height: 320px;
+      position: relative;
+    }
+
+    .period-selector {
+      display: flex;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .period-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .period-btn.active {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .denom-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .denom-table th,
+    .denom-table td {
+      padding: 8px 6px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .denom-table th {
+      background: var(--bg-elevated);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .denom-table td {
+      background: var(--bg-surface);
+      font-size: 0.82rem;
+    }
+
+    .denom-input {
+      width: 64px;
+      padding: 5px 4px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      text-align: center;
+      font-size: 0.8rem;
+      transition: all 0.15s;
+    }
+
+    .denom-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .verification-box {
+      padding: 14px 18px;
+      border-radius: var(--radius-md);
+      border-left: 3px solid;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .verification-box.ok {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: #6ee7b7;
+    }
+
+    .verification-box.low {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: #fca5a5;
+    }
+
+    .verification-box.high {
+      background: var(--warning-bg);
+      border-color: var(--warning);
+      color: #fde68a;
+    }
+
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.25s ease;
+      min-width: 280px;
+      font-size: 0.875rem;
+      pointer-events: all;
+    }
+
+    .toast i {
+      font-size: 0.9rem;
+    }
+
+    .toast.success {
+      border-left: 3px solid var(--success);
+    }
+    .toast.success i { color: var(--success); }
+    .toast.error {
+      border-left: 3px solid var(--danger);
+    }
+    .toast.error i { color: var(--danger); }
+    .toast.warning {
+      border-left: 3px solid var(--warning);
+    }
+    .toast.warning i { color: var(--warning); }
+    .toast.info {
+      border-left: 3px solid var(--accent);
+    }
+    .toast.info i { color: var(--accent-bright); }
+
+    @keyframes toastIn {
+      from { transform: translateX(20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes toastOut {
+      from { opacity: 1; }
+      to { opacity: 0; transform: translateY(8px); }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 8, 16, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg), 0 0 60px rgba(0, 0, 0, 0.8);
+      animation: modalIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .modal-lg {
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes modalIn {
+      from { transform: scale(0.92) translateY(10px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .access-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    }
+
+    .mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .mode-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-card:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .mode-card i {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .mode-card.trial i { color: var(--warning); }
+    .mode-card.premium i { color: var(--gold); }
+    .mode-card h4 {
+      font-family: var(--font-head);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .mode-card p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .audits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .audit-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .audit-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .audit-card:hover {
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow-accent);
+      transform: translateY(-2px);
+    }
+    .audit-card:hover::before { opacity: 1; }
+    .audit-card-name {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .audit-card-addr {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .audit-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      font-size: 0.82rem;
+    }
+    .summary-gradient {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(139, 92, 246, 0.08) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .summary-title {
+      font-family: var(--font-head);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+    .summary-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .summary-item .s-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .summary-item .s-value {
+      font-family: var(--font-head);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+    @media (max-width: 768px) { .week-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 480px) { .week-grid { grid-template-columns: repeat(2, 1fr); } }
+    .day-tile {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .day-tile:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-hover);
+    }
+    .day-tile.active {
+      background: var(--accent-glow);
+      border-color: var(--border-accent);
+    }
+    .day-tile.inactive {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .day-tile .d-name {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+    .day-tile .d-amount {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-bright);
+      margin-top: 4px;
+    }
+    .day-tile .d-date {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .change-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      background: var(--warning-bg);
+      color: var(--warning);
+      border-radius: 99px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    tr.price-changed td {
+      background: rgba(245, 158, 11, 0.04) !important;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mt-4 { margin-top: 16px; }
+    .mb-4 { margin-bottom: 16px; }
+    .w-full { width: 100%; }
+    .text-sm { font-size: 0.8rem; }
+    .text-xs { font-size: 0.72rem; }
+    .text-muted { color: var(--text-muted); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-success { color: var(--success); }
+    .text-danger { color: var(--danger); }
+    .text-warning { color: var(--warning); }
+    .text-accent { color: var(--accent-bright); }
+    .font-bold { font-weight: 700; }
+    .font-head { font-family: var(--font-head); }
+    .text-right { text-align: right; }
+    .add-audit-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 28px;
+      background: transparent;
+      border: 2px dashed rgba(59, 130, 246, 0.3);
+      border-radius: var(--radius-xl);
+      color: var(--accent-bright);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      width: 100%;
+      justify-content: center;
+    }
+    .add-audit-btn:hover {
+      background: var(--accent-glow);
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow-accent);
+    }
+    .config-section {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .config-section-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .config-section-header i {
+      color: var(--accent-bright);
+      font-size: 0.8rem;
+    }
+    .config-section-body {
+      padding: 20px;
+    }
+    .info-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .info-box i {
+      color: var(--accent-bright);
+      flex-shrink: 0;
+    }
+    #printArea {
+      display: none;
+    }
+    @media print {
+      body { background: white; color: black; }
+      body::before { display: none; }
+      .no-print, .tabs-wrapper, .btn, .header-actions, .modal-overlay, #toast-container { display: none !important; }
+      #printArea { display: block; }
+      #viewAuditsList, #viewAuditDetail > *:not(#printArea) { display: none !important; }
+      .app-container { padding: 0; }
+    }
+    @media (max-width: 768px) {
+      .app-container { padding: 14px; }
+      .header { padding: 16px 18px; }
+      .header h1 { font-size: 1.1rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .tab-btn span { display: none; }
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+    .logo i {
+      color: var(--accent);
+      font-size: 1.4rem;
+    }
+    .logo-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid rgba(201, 169, 97, 0.5);
+      transition: var(--transition);
+    }
+    .logo-img:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.12);
+    }
+  </style>
+</head>
+<body>
+  <div id="mainApp" class="app-container hidden">
+    <div id="viewAuditsList">
+      <header class="header">
+        <div class="header-brand">
+          <a href="https://pacho-fg.onrender.com" target="_blank" rel="noopener" class="logo" title="Desarrollado por FGStudio">
+            <img class="logo-img" src="https://i.ibb.co/LDG7Gf2d/fotor-ai-2025020222510.jpg" alt="Serenity Spa Logo">
+          </a>
+          <div>
+            <h1>IPV · Auditoría</h1>
+            <div class="header-subtitle">Sistema Avanzado de Ventas y Finanzas</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span class="pill" id="auditCountBadge"><span class="dot"></span>0 Auditorías</span>
+          <span class="pill" id="mainTimerBadge" onclick="openTimerModal()">
+            <i class="fa-regular fa-clock"></i> <span id="timerText">Cargando...</span>
+          </span>
+          <button class="pill btn-logout" id="btnLogout"><i class="fa-solid fa-sign-out-alt"></i> Cerrar Sesión</button>
+        </div>
+      </header>
+      <div class="audits-grid" id="auditsGrid"></div>
+      <button class="add-audit-btn" id="btnOpenCreateAudit">
+        <i class="fa-solid fa-plus-circle"></i> Nueva Auditoría
+      </button>
+    </div>
+    <div id="viewAuditDetail" class="hidden">
+      <header class="header">
+        <div class="header-brand">
+          <button class="btn btn-ghost btn-icon" id="btnBack"><i class="fa-solid fa-arrow-left"></i></button>
+          <div>
+            <h1 id="detailTitle" style="font-size:1.15rem;">Negocio</h1>
+            <div class="header-subtitle" id="detailSubtitle">Dirección</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="pill accent" id="btnOpenPaymentsAttributions">
+            <i class="fa-solid fa-hand-holding-dollar"></i> Pagos & Atribuciones
+          </button>
+          <span class="pill" id="detailProductCount"><i class="fa-solid fa-boxes-stacked"></i> 0 Productos</span>
+          <button class="pill btn-logout" id="btnLogoutDetail"><i class="fa-solid fa-sign-out-alt"></i> Cerrar Sesión</button>
+        </div>
+      </header>
+      <div class="tabs-wrapper">
+        <button class="tab-btn" id="tabInventory" data-tab="inventory">
+          <i class="fa-solid fa-boxes-stacked"></i><span>Inventario IPV</span>
+        </button>
+        <button class="tab-btn" id="tabFinance" data-tab="finance">
+          <i class="fa-solid fa-chart-pie"></i><span>Finanzas</span>
+        </button>
+        <button class="tab-btn" id="tabReport" data-tab="report">
+          <i class="fa-solid fa-print"></i><span>Reporte</span>
+        </button>
+      </div>
+      <div id="contentInventory" class="card">
+        <div class="section-header">
+          <div class="section-title"><i class="fa-solid fa-clipboard-list"></i> Control de Inventario</div>
+          <button class="btn btn-primary btn-sm" id="btnSaveFinalAsStart">
+            <i class="fa-solid fa-rotate-right"></i> Final → Inicio
+          </button>
+        </div>
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+          <div>
+            <label class="form-label">Trabajador</label>
+            <input type="text" id="workerNameInput" class="input-wide" placeholder="Nombre del trabajador" onchange="saveData()">
+          </div>
+          <div>
+            <label class="form-label">Turno</label>
+            <input type="text" id="shiftInput" class="input-wide" placeholder="Matutino / Vespertino" onchange="saveData()">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="inventoryTable">
+            <thead><tr><th></th><th>Código</th><th>Producto</th><th>Inicio</th><th>Baja</th><th>Total</th><th>Final</th><th>Vendido</th><th>Precio</th><th>Importe</th></tr></thead>
+            <tbody id="inventoryTableBody"></tbody>
+          </table>
+        </div>
+        <div style="padding: 16px 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background: var(--bg-elevated);">
+          <span class="text-sm text-muted font-bold" style="text-transform:uppercase; letter-spacing:0.08em;">Total Ventas del Día</span>
+          <span class="font-head text-accent" style="font-size:1.5rem; font-weight:700;" id="inventoryTotalSales">$0.00</span>
+        </div>
+        <div style="padding: 20px;">
+          <div class="flex-between mb-4">
+            <div class="section-title" style="font-size:0.9rem;"><i class="fa-solid fa-money-bill-wave"></i> Desglose de Efectivo</div>
+            <button class="btn btn-danger btn-sm" id="btnResetBreakdown"><i class="fa-solid fa-rotate-left"></i> Reiniciar</button>
+          </div>
+          <div class="table-wrap">
+            <table class="denom-table">
+              <thead><tr id="denominationHeader"></tr></thead>
+              <tbody>
+                <tr id="denominationQuantityRow"></tr>
+                <tr id="denominationSubtotalRow"></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top: 12px; display:flex; align-items:center; gap:10px; padding: 14px 18px; background: var(--bg-elevated); border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <i class="fa-solid fa-coins" style="color: var(--warning);"></i>
+            <span class="text-sm text-muted">Total en Efectivo</span>
+            <span class="font-head font-bold text-accent ml-auto" id="totalBreakdown" style="margin-left:auto; font-size:1.1rem;">$0</span>
+          </div>
+        </div>
+        <div style="padding: 0 20px 20px;">
+          <div class="config-section">
+            <div class="config-section-header"><i class="fa-solid fa-check-double"></i> Verificación de Cierre</div>
+            <div class="config-section-body">
+              <div class="form-row">
+                <div><label class="form-label">Efectivo Recibido ($)</label><input type="number" id="cashReceived" class="form-control" step="0.01" value="0" oninput="validateClosing()"></div>
+                <div><label class="form-label">Transferencia ($)</label><input type="number" id="transferAmount" class="form-control" step="0.01" value="0" oninput="validateClosing()"></div>
+                <div><label class="form-label">Total Ventas</label><input type="text" id="totalSalesDisplay" class="form-control" readonly style="background: var(--bg-elevated); color: var(--text-secondary);"></div>
+                <div style="display:flex; align-items:flex-end;"><button class="btn btn-primary w-full" onclick="validateClosing()"><i class="fa-solid fa-calculator"></i> Verificar</button></div>
+              </div>
+              <div id="validationMessage" class="hidden"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="contentFinance" class="hidden">
+        <div class="card" style="padding: 12px 16px; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div class="flex gap-2">
+            <button class="btn btn-primary btn-sm active" id="viewInvestorBtn"><i class="fa-solid fa-chart-simple"></i> Inversionista</button>
+            <button class="btn btn-ghost btn-sm" id="viewSupervisorBtn"><i class="fa-solid fa-eye"></i> Supervisor</button>
+          </div>
+          <div class="flex gap-2 align-items-center" style="align-items:center;">
+            <i class="fa-solid fa-calendar-day text-muted" style="font-size:0.85rem;"></i>
+            <select id="dateFilterSelect" class="input-wide text-sm" style="width:auto;"><option value="today">Hoy (Actual)</option></select>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-coins"></i></div><div class="stat-label">Total Ventas</div><div class="stat-value blue" id="finTotalSales">$0.00</div></div>
+          <div class="stat-card"><div class="stat-icon yellow"><i class="fa-solid fa-wallet"></i></div><div class="stat-label">Inversión</div><div class="stat-value" id="finInvestment">$0.00</div></div>
+          <div class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-chart-line"></i></div><div class="stat-label">Ganancia Bruta</div><div class="stat-value green" id="finGrossProfit">$0.00</div></div>
+          <div class="stat-card"><div class="stat-icon red"><i class="fa-solid fa-user-minus"></i></div><div class="stat-label">Desc. Trabajador</div><div class="stat-value red" id="finWorkerDiscount">$0.00</div></div>
+          <div class="stat-card featured"><div class="stat-icon purple"><i class="fa-solid fa-trophy"></i></div><div class="stat-label">Ganancia Neta</div><div class="stat-value blue" id="finNetProfit">$0.00</div></div>
+        </div>
+        <div class="config-section mb-4">
+          <div class="config-section-header"><i class="fa-solid fa-sliders"></i> Configuración de Descuento al Trabajador</div>
+          <div class="config-section-body">
+            <div class="form-row" style="align-items:flex-end;">
+              <div><label class="form-label">Tipo</label><select id="salaryType" class="form-control"><option value="percentage">Porcentaje (%)</option><option value="fixed">Fijo ($)</option></select></div>
+              <div><label class="form-label" id="salaryValueLabel">Valor</label><input type="number" id="salaryValue" class="form-control" value="10"></div>
+              <div><button class="btn btn-primary" id="btnApplySalary"><i class="fa-solid fa-check"></i> Aplicar</button></div>
+            </div>
+            <div class="info-box" id="salaryInfoText"></div>
+          </div>
+        </div>
+        <div id="chartContainer" class="chart-container">
+          <div class="section-header">
+            <div><div class="section-title"><i class="fa-solid fa-chart-bar"></i> <span id="chartTitle">Análisis de Ventas</span></div><div class="text-xs text-muted mt-2" style="margin-top:4px;">Clic en una barra para ver detalles por producto</div></div>
+            <div class="period-selector">
+              <button class="period-btn active" data-period="day">Día</button>
+              <button class="period-btn" data-period="week">Semana</button>
+              <button class="period-btn" data-period="month">Mes</button>
+              <button class="period-btn" data-period="year">Año</button>
+            </div>
+          </div>
+          <div class="chart-body"><canvas id="salesChart"></canvas></div>
+        </div>
+        <div id="weekDaySelector" class="card hidden" style="padding: 16px; margin-bottom: 20px;">
+          <div class="section-title" style="font-size:0.85rem;"><i class="fa-regular fa-calendar-week"></i> Selecciona un día</div>
+          <div class="week-grid" id="weekDayButtons"></div>
+        </div>
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title"><i class="fa-solid fa-table-list"></i> <span id="productTableTitle">Gestión de Productos</span></div>
+            <div class="flex gap-2"><div id="resetSelectionContainer" class="hidden"><button class="btn btn-ghost btn-sm" id="btnResetChartSelection"><i class="fa-solid fa-xmark"></i> Ver Todos</button></div></div>
+          </div>
+          <div class="table-wrap">
+            <table id="financeTable"><thead id="financeTableHead"></thead><tbody id="financeTableBody"></tbody></table>
+          </div>
+          <div style="padding: 14px 20px; border-top: 1px solid var(--border);"><button class="btn btn-ghost btn-sm" id="btnAddProductFinance"><i class="fa-solid fa-plus"></i> Agregar Producto</button></div>
+        </div>
+      </div>
+      <div id="contentReport" class="hidden">
+        <div class="card" style="padding: 60px 40px; text-align:center;">
+          <div style="width:72px;height:72px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 24px;box-shadow:0 8px 24px rgba(59,130,246,0.3);"><i class="fa-solid fa-file-invoice" style="color:white;"></i></div>
+          <h2 style="font-family:var(--font-head);font-size:1.4rem;margin-bottom:8px;">Generar Reporte</h2>
+          <p class="text-secondary" style="margin-bottom:32px;max-width:400px;margin-left:auto;margin-right:auto;">Exporta un documento profesional con el detalle completo de ventas, inventario y análisis financiero.</p>
+          <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-lg" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir</button>
+            <button class="btn btn-ghost btn-lg" onclick="downloadPDF()"><i class="fa-solid fa-file-arrow-down"></i> Descargar PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="modalPaymentsAttributions">
+    <div class="modal-box modal-lg">
+      <div class="modal-header"><div class="modal-title"><i class="fa-solid fa-hand-holding-dollar" style="color:var(--accent-bright);margin-right:10px;"></i>Pagos y Atribuciones</div><button class="btn btn-ghost btn-icon btn-sm" onclick="closePaymentsModal()"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="form-row mb-4" style="align-items:flex-end;">
+        <div><label class="form-label">Ver por</label><select id="attributionPeriod" class="form-control"><option value="day">Día</option><option value="week">Semana</option><option value="month">Mes</option><option value="year">Año</option></select></div>
+        <div><label class="form-label">Fecha</label><input type="date" id="attributionDate" class="form-control"></div>
+        <div><button class="btn btn-primary" id="btnLoadAttributionData"><i class="fa-solid fa-magnifying-glass"></i> Cargar</button></div>
+      </div>
+      <div class="summary-gradient"><div class="summary-title">Resumen de Ventas</div><div class="summary-grid"><div class="summary-item"><div class="s-label">Total Ventas</div><div class="s-value" id="attTotalSales">$0.00</div></div><div class="summary-item"><div class="s-label">Ganancia Bruta</div><div class="s-value" id="attGrossProfit">$0.00</div></div><div class="summary-item"><div class="s-label">Ganancia Neta</div><div class="s-value" id="attNetProfit">$0.00</div></div></div></div>
+      <div id="weekDetailContainer" class="hidden mb-4"><div class="section-title text-sm mb-2" style="font-size:0.82rem;">Ventas por Día</div><div class="week-grid" id="weekDaysContainer"></div><div class="info-box mt-3" id="weekTotalContainer"><i class="fa-solid fa-sigma"></i><span>Total de la semana:</span><strong class="text-accent" id="weekTotalSales" style="margin-left:auto;">$0.00</strong></div></div>
+      <div class="config-section mb-3"><div class="config-section-header"><i class="fa-solid fa-percent"></i> Configuración de Atribuciones</div><div class="config-section-body"><div class="form-row"><div><label class="form-label">Porcentaje (%)</label><input type="number" id="attributionPercent" class="form-control" value="5" min="0" max="100" step="0.1"></div><div><label class="form-label">Base de Cálculo</label><select id="attributionBase" class="form-control"><option value="gross">Ganancia Bruta</option><option value="sales">Ventas Totales</option><option value="net">Ganancia Neta</option></select></div><div><label class="form-label">Frecuencia</label><select id="attributionFrequency" class="form-control"><option value="daily">Diario</option><option value="weekly">Semanal</option><option value="monthly">Mensual</option></select></div></div><div class="form-row mt-3" style="align-items:flex-end;"><div><label class="form-label">Monto Calculado</label><input type="text" id="calculatedAttribution" class="form-control" readonly style="background:var(--bg-elevated);"></div><div><label class="form-label">Monto a Declarar</label><input type="number" id="adjustedAttribution" class="form-control" step="0.01" value="0"></div><div><button class="btn btn-success" id="btnApplyAdjustment"><i class="fa-solid fa-check"></i> Aplicar</button></div></div><div class="info-box" id="adjustmentInfo"></div></div></div>
+      <div class="config-section mb-3"><div class="config-section-header"><i class="fa-solid fa-tag"></i> Descuento sobre Ganancia Bruta</div><div class="config-section-body"><div class="form-row"><div><label class="form-label">Porcentaje (%)</label><input type="number" id="discountPercent" class="form-control" value="0" min="0" max="100" step="0.1"></div><div><label class="form-label">Monto a Descontar</label><input type="text" id="discountAmount" class="form-control" readonly style="background:var(--bg-elevated);"></div><div><label class="form-label">Ganancia Restante</label><input type="text" id="remainingProfit" class="form-control" readonly style="background:var(--bg-elevated);"></div></div></div></div>
+      <div class="config-section mb-3"><div class="config-section-header"><i class="fa-solid fa-id-card"></i> Licencia Mensual</div><div class="config-section-body"><div class="form-row" style="align-items:flex-end;"><div><label class="form-label">Costo Mensual ($)</label><input type="number" id="licenseCost" class="form-control" value="0" step="0.01"></div><div><label class="form-label">Provisión Diaria</label><input type="text" id="dailyProvision" class="form-control" readonly style="background:var(--bg-elevated);"></div><div style="display:flex;align-items:center;gap:10px;padding-bottom:2px;"><input type="checkbox" id="licensePaid" style="width:16px;height:16px;accent-color:var(--accent);"><label for="licensePaid" class="text-sm text-secondary">Mes pagado</label></div></div><button class="btn btn-primary btn-sm mt-3" id="btnSaveLicenseConfig"><i class="fa-solid fa-floppy-disk"></i> Guardar</button></div></div>
+      <div class="config-section mb-3"><div class="config-section-header"><i class="fa-solid fa-landmark"></i> Fisco Anual</div><div class="config-section-body"><div class="form-row" style="align-items:flex-end;"><div><label class="form-label">Porcentaje (%)</label><input type="number" id="fiscoPercent" class="form-control" value="8" min="0" max="100" step="0.1"></div><div><label class="form-label">Ganancia Neta Acum.</label><input type="text" id="accumulatedNetProfit" class="form-control" readonly style="background:var(--bg-elevated);"></div><div><label class="form-label">Fisco a Pagar</label><input type="text" id="fiscoAmount" class="form-control" readonly style="background:var(--bg-elevated);"></div><div><label class="form-label">Provisión Mensual</label><input type="text" id="monthlyFiscoProvision" class="form-control" readonly style="background:var(--bg-elevated);"></div></div><button class="btn btn-primary btn-sm mt-3" id="btnCalculateFisco"><i class="fa-solid fa-calculator"></i> Calcular Fisco</button></div></div>
+      <button class="btn btn-success w-full" id="btnRecordPayment" style="margin-top:8px;"><i class="fa-solid fa-circle-check"></i> Registrar Pago de Atribución</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="modalCreateAudit">
+    <div class="modal-box"><div class="modal-header"><div class="modal-title">Nueva Auditoría</div><button class="btn btn-ghost btn-icon btn-sm" id="btnCancelCreateAudit"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="form-group"><label class="form-label">Nombre del Negocio</label><input type="text" id="newAuditName" class="form-control" placeholder="Ej. Tienda Central"></div>
+      <div class="form-group"><label class="form-label">Dirección</label><input type="text" id="newAuditAddress" class="form-control" placeholder="Ej. Av. Siempre Viva 123"></div>
+      <div class="flex-between" style="margin-top: 24px; gap:10px;"><button class="btn btn-ghost" id="btnCancelCreateAudit2">Cancelar</button><button class="btn btn-primary" id="btnConfirmCreateAudit"><i class="fa-solid fa-plus"></i> Crear Auditoría</button></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="modalAccess">
+    <div class="modal-box" style="text-align:center;">
+      <div id="authStep1"><div class="access-icon"><i class="fa-solid fa-lock" style="color:white;"></i></div><h2 style="font-family:var(--font-head);font-size:1.3rem;margin-bottom:6px;">Acceso al Sistema</h2><p class="text-secondary text-sm" style="margin-bottom:24px;">Ingrese su contraseña para continuar</p><input type="password" id="accessPassword" class="form-control" placeholder="Contraseña de acceso" style="text-align:center;margin-bottom:12px;"><button class="btn btn-primary w-full" id="btnAccess">Ingresar</button><p id="accessError" class="text-danger text-sm mt-3 hidden" style="margin-top:12px;">Contraseña incorrecta</p></div>
+      <div id="authStep2" class="hidden"><h2 style="font-family:var(--font-head);font-size:1.2rem;margin-bottom:6px;">Configurar Licencia</h2><p class="text-secondary text-sm" style="margin-bottom:4px;">Seleccione el tipo de licencia</p><div class="mode-cards"><div class="mode-card trial" onclick="selectAccessMode('trial')"><i class="fa-solid fa-hourglass-half"></i><h4>Modo Prueba</h4><p>Duración: 1 Mes</p></div><div class="mode-card premium" onclick="selectAccessMode('premium')"><i class="fa-solid fa-crown"></i><h4>Premium</h4><p>Sin límite de tiempo</p></div></div></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="modalTimerInfo"><div class="modal-box"><div class="modal-header"><div class="modal-title">Estado del Sistema</div><button class="btn btn-ghost btn-icon btn-sm" onclick="closeTimerModal()"><i class="fa-solid fa-xmark"></i></button></div><div class="config-section"><div class="config-section-body"><div class="flex-between" style="margin-bottom:8px;"><span class="text-xs text-muted" style="text-transform:uppercase;letter-spacing:0.08em;">Modo Actual</span><span class="pill accent" id="infoModeDisplay">--</span></div><div class="flex-between"><span class="text-xs text-muted" style="text-transform:uppercase;letter-spacing:0.08em;">Tiempo Restante</span><span class="font-head font-bold text-primary" id="infoTimeDisplay">--</span></div></div></div><button class="btn btn-danger w-full mt-3" id="btnResetSystem"><i class="fa-solid fa-power-off"></i> Reiniciar Sistema</button></div></div>
+  <div id="printArea"><div style="text-align:center;margin-bottom:30px;"><h1 id="printBusinessName" style="font-size:22px;margin-bottom:5px;"></h1><p id="printAddress"></p><p><strong>Fecha:</strong> <span id="printDateTime"></span></p><p><strong>Trabajador:</strong> <span id="printWorker"></span> | <strong>Turno:</strong> <span id="printShift"></span></p></div><table style="width:100%;border-collapse:collapse;margin-bottom:20px;"><thead><tr style="background:#eee;"><th style="border:1px solid #ccc;padding:8px;">Código</th><th style="border:1px solid #ccc;padding:8px;">Producto</th><th style="border:1px solid #ccc;padding:8px;">Costo</th><th style="border:1px solid #ccc;padding:8px;">Margen%</th><th style="border:1px solid #ccc;padding:8px;">Inicio</th><th style="border:1px solid #ccc;padding:8px;">Final</th><th style="border:1px solid #ccc;padding:8px;">Vendido</th><th style="border:1px solid #ccc;padding:8px;">Precio</th><th style="border:1px solid #ccc;padding:8px;">Importe</th></tr></thead><tbody id="printTableBody"></tbody></table><div style="border-top:2px solid #000;padding-top:15px;"><p><strong>Total Ventas:</strong> <span id="printTotalSales"></span></p><p><strong>Inversión Total:</strong> <span id="printTotalInvestment"></span></p><p><strong>Ganancia Bruta:</strong> <span id="printGrossProfit"></span></p><p><strong>Descuento Trabajador:</strong> <span id="printWorkerDiscount"></span></p><p><strong>Ganancia Neta:</strong> <span id="printNetProfit"></span></p><p><strong>Efectivo:</strong> $<span id="printCashAmount"></span> | <strong>Transferencia:</strong> $<span id="printTransferAmount"></span></p></div></div>
+  <div id="toast-container"></div>
+  <script>
+    const DENOMINATIONS = [5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 1];
+    const STATE = {
+      audits: [], currentAuditId: null, products: [], chartInstance: null, chartPeriod: 'day',
+      salary: { type: 'percentage', value: 10 }, financeView: 'investor', selectedProductId: null,
+      password: '1234', timerInterval: null, billBreakdown: {}, currentTab: 'inventory', selectedDay: null,
+      salesHistory: {}, priceHistory: {},
+      paymentsConfig: { attributionPercent: 5, attributionBase: 'gross', attributionFrequency: 'daily', adjustedAttribution: 0, discountPercent: 0, licenseCost: 0, licensePaid: false, fiscoPercent: 8 },
+      isPaymentsModalOpen: false
+    };
+    const CONFIG = { TRIAL_DAYS: 30, TRIAL_MS: 30 * 24 * 60 * 60 * 1000, STORAGE_KEY_MODE: 'ipv_access_mode', STORAGE_KEY_START: 'ipv_start_date', STORAGE_KEY_DATA: 'ipvAudits', STORAGE_KEY_BREAKDOWN: 'ipv_breakdown', STORAGE_KEY_PAYMENTS: 'ipv_payments_config', STORAGE_KEY_STATE: 'ipv_app_state', STORAGE_KEY_MODAL_STATE: 'ipv_modal_state' };
+    function showToast(msg, type = 'info') { const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' }; const t = document.createElement('div'); t.className = `toast ${type}`; t.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(() => { t.style.animation = 'toastOut 0.25s forwards'; setTimeout(() => t.remove(), 250); }, 3000); }
+    function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])); }
+    function calculateSold(p) { const s = p.inicio || 0; const l = p.baja || 0; const f = (p.finalReal !== undefined && p.finalReal !== null && p.finalReal !== '') ? p.finalReal : (s - l); return Math.max(0, s - l - f); }
+    function calculateTotalSales() { return STATE.products.reduce((sum, p) => sum + calculateSold(p) * (p.price || 0), 0); }
+    function calculateInvestment() { return STATE.products.reduce((sum, p) => sum + calculateSold(p) * (p.costPrice || 0), 0); }
+    function calculateGrossProfit() { return STATE.products.reduce((sum, p) => { const s = calculateSold(p); return sum + s * ((p.price || 0) - (p.costPrice || 0)); }, 0); }
+    function calculateSalaryDiscount(ts) { return STATE.salary.type === 'percentage' ? ts * (STATE.salary.value / 100) : STATE.salary.value; }
+    function getPeriodMultiplier() { return { week: 7, month: 30, year: 365 }[STATE.chartPeriod] || 1; }
+    function calculateSalePrice(cost, margin) { if (cost <= 0) return 0; if (margin >= 100) margin = 99.9; return cost / (1 - (margin / 100)); }
+    function saveAppState() { sessionStorage.setItem(CONFIG.STORAGE_KEY_STATE, JSON.stringify({ currentAuditId: STATE.currentAuditId, currentTab: STATE.currentTab, chartPeriod: STATE.chartPeriod, selectedDay: STATE.selectedDay })); }
+    function loadAppState() { try { return JSON.parse(sessionStorage.getItem(CONFIG.STORAGE_KEY_STATE)); } catch (e) { return null; } }
+    function saveModalState() { sessionStorage.setItem(CONFIG.STORAGE_KEY_MODAL_STATE, JSON.stringify({ isPaymentsModalOpen: STATE.isPaymentsModalOpen })); }
+    function loadModalState() { try { const s = JSON.parse(sessionStorage.getItem(CONFIG.STORAGE_KEY_MODAL_STATE)); if (s?.isPaymentsModalOpen) { STATE.isPaymentsModalOpen = true; openPaymentsModal(); } } catch (e) {} }
+    function recordDailySale() { const today = new Date().toISOString().split('T')[0]; const id = STATE.currentAuditId; if (!STATE.salesHistory[id]) STATE.salesHistory[id] = {}; const ts = calculateTotalSales(); const gp = calculateGrossProfit(); STATE.salesHistory[id][today] = { totalSales: ts, grossProfit: gp, netProfit: gp - calculateSalaryDiscount(ts), products: STATE.products.map(p => ({ id: p.id, name: p.name, code: p.code, sold: calculateSold(p), price: p.price, costPrice: p.costPrice })) }; localStorage.setItem('ipv_sales_history', JSON.stringify(STATE.salesHistory)); }
+    function loadSalesHistory() { const s = localStorage.getItem('ipv_sales_history'); if (s) STATE.salesHistory = JSON.parse(s); }
+    function checkPriceChange(productId, oldPrice, newPrice) { if (oldPrice === newPrice) return false; const today = new Date().toISOString().split('T')[0]; const id = STATE.currentAuditId; if (!STATE.priceHistory[id]) STATE.priceHistory[id] = {}; if (!STATE.priceHistory[id][productId]) STATE.priceHistory[id][productId] = []; STATE.priceHistory[id][productId].push({ date: today, oldPrice, newPrice }); localStorage.setItem('ipv_price_history', JSON.stringify(STATE.priceHistory)); return true; }
+    function initBreakdown() { const s = localStorage.getItem(CONFIG.STORAGE_KEY_BREAKDOWN); STATE.billBreakdown = s ? JSON.parse(s) : {}; DENOMINATIONS.forEach(d => { if (STATE.billBreakdown[d] === undefined) STATE.billBreakdown[d] = 0; }); renderBreakdown(); }
+    function renderBreakdown() { const hdr = document.getElementById('denominationHeader'); const qRow = document.getElementById('denominationQuantityRow'); const sRow = document.getElementById('denominationSubtotalRow'); if (!hdr) return; hdr.innerHTML = ''; qRow.innerHTML = ''; sRow.innerHTML = ''; let total = 0; DENOMINATIONS.forEach(d => { const qty = STATE.billBreakdown[d] || 0; const sub = d * qty; total += sub; hdr.innerHTML += `<th>$${d}</th>`; qRow.innerHTML += `<td><input type="number" class="denom-input" value="${qty}" min="0" step="1" onchange="updateDenomination(${d},this.value)"></td>`; sRow.innerHTML += `<td style="font-weight:600;color:var(--text-primary);">$${sub}</td>`; }); const totalEl = document.getElementById('totalBreakdown'); if (totalEl) totalEl.textContent = `$${total.toLocaleString()}`; const cr = document.getElementById('cashReceived'); if (cr) cr.value = total; validateClosing(); localStorage.setItem(CONFIG.STORAGE_KEY_BREAKDOWN, JSON.stringify(STATE.billBreakdown)); }
+    window.updateDenomination = (d, v) => { STATE.billBreakdown[d] = parseInt(v) || 0; renderBreakdown(); };
+    window.resetBreakdown = () => { DENOMINATIONS.forEach(d => { STATE.billBreakdown[d] = 0; }); renderBreakdown(); showToast('Desglose reiniciado', 'success'); };
+    function validateClosing() { const ts = calculateTotalSales(); const disp = document.getElementById('totalSalesDisplay'); if (disp) disp.value = `$${ts.toFixed(2)}`; const cash = parseFloat(document.getElementById('cashReceived')?.value) || 0; const transfer = parseFloat(document.getElementById('transferAmount')?.value) || 0; const total = cash + transfer; const diff = total - ts; const el = document.getElementById('validationMessage'); if (!el) return; if (Math.abs(diff) < 0.01) { el.className = 'verification-box ok'; el.classList.remove('hidden'); el.innerHTML = '<i class="fa-solid fa-circle-check"></i> Cierre correcto — el efectivo coincide exactamente con las ventas.'; } else if (diff < 0) { el.className = 'verification-box low'; el.classList.remove('hidden'); el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Falta dinero — faltan $${Math.abs(diff).toFixed(2)} para completar las ventas.`; } else { el.className = 'verification-box high'; el.classList.remove('hidden'); el.innerHTML = `<i class="fa-solid fa-circle-info"></i> Sobra dinero — hay $${diff.toFixed(2)} por encima de las ventas.`; } }
+    function saveData() { if (!STATE.currentAuditId) { localStorage.setItem(CONFIG.STORAGE_KEY_DATA, JSON.stringify(STATE.audits)); return; } const idx = STATE.audits.findIndex(a => a.id === STATE.currentAuditId); if (idx !== -1) { STATE.audits[idx].products = JSON.parse(JSON.stringify(STATE.products)); STATE.audits[idx].workerName = document.getElementById('workerNameInput')?.value || ''; STATE.audits[idx].shift = document.getElementById('shiftInput')?.value || ''; STATE.audits[idx].salary = { ...STATE.salary }; localStorage.setItem(CONFIG.STORAGE_KEY_DATA, JSON.stringify(STATE.audits)); } }
+    function loadData() { const d = localStorage.getItem(CONFIG.STORAGE_KEY_DATA); STATE.audits = d ? JSON.parse(d) : []; loadSalesHistory(); renderAuditList(); sessionStorage.removeItem(CONFIG.STORAGE_KEY_STATE); }
+    function renderAuditList() { const g = document.getElementById('auditsGrid'); if (!g) return; g.innerHTML = ''; document.getElementById('auditCountBadge').innerHTML = `<span class="dot"></span>${STATE.audits.length} Auditorías`; STATE.audits.forEach(a => { const card = document.createElement('div'); card.className = 'audit-card'; card.innerHTML = `<div class="flex-between" style="margin-bottom:4px;"><div class="audit-card-name">${escapeHtml(a.businessName)}</div><button class="btn btn-danger btn-icon btn-sm" onclick="event.stopPropagation();deleteAudit(${a.id})"><i class="fa-solid fa-trash"></i></button></div><div class="audit-card-addr"><i class="fa-solid fa-location-dot" style="font-size:0.7rem;"></i>${escapeHtml(a.address)}</div><div class="audit-card-meta"><div class="flex gap-2 align-center" style="align-items:center;"><i class="fa-solid fa-user" style="color:var(--text-muted);font-size:0.8rem;"></i><span class="text-secondary">${escapeHtml(a.workerName||'Sin asignar')}</span></div><span class="pill"><i class="fa-solid fa-boxes-stacked"></i> ${(a.products||[]).length} prods.</span></div><button class="btn btn-primary w-full" onclick="openAudit(${a.id})">Abrir Auditoría <i class="fa-solid fa-arrow-right"></i></button>`; g.appendChild(card); }); }
+    function renderInventory() { const tbody = document.getElementById('inventoryTableBody'); if (!tbody) return; tbody.innerHTML = ''; let prods = STATE.products; if (STATE.selectedDay) { const d = STATE.salesHistory[STATE.currentAuditId]?.[STATE.selectedDay]; if (d) prods = STATE.products.filter(p => d.products.find(dp => dp.id === p.id && dp.sold > 0)); else prods = []; } prods.forEach(p => { const sold = calculateSold(p), total = (p.inicio || 0) - (p.baja || 0), final = p.finalReal !== undefined ? p.finalReal : total, amount = sold * (p.price || 0); const changes = STATE.priceHistory[STATE.currentAuditId]?.[p.id] || []; const changed = changes.some(c => new Date(c.date).toDateString() === new Date().toDateString()); const tr = document.createElement('tr'); if (changed) tr.classList.add('price-changed'); tr.innerHTML = `<td><button class="btn btn-danger btn-icon btn-sm" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button></td><td><input class="input-mini" value="${escapeHtml(p.code)}" onchange="updateProduct(${p.id},'code',this.value)"></td><td><input class="input-wide" value="${escapeHtml(p.name)}" onchange="updateProduct(${p.id},'name',this.value)"></td><td><input class="input-mini" type="number" value="${p.inicio||0}" onchange="updateProduct(${p.id},'inicio',this.value)"></td><td><input class="input-mini" type="number" value="${p.baja||0}" onchange="updateProduct(${p.id},'baja',this.value)"></td><td class="font-bold" style="color:var(--text-primary);">${total}</td><td><input class="input-mini" type="number" value="${final}" onchange="updateProduct(${p.id},'finalReal',this.value)"></td><td class="font-bold text-accent">${sold}</td><td><input class="input-mini" type="number" value="${(p.price||0).toFixed(2)}" step="0.01" onchange="updateProductWithPriceCheck(${p.id},'price',this.value)">${changed ? '<span class="change-tag"><i class="fa-solid fa-triangle-exclamation"></i> cambió</span>' : ''}</td><td class="font-bold" style="color:var(--text-primary);">$${amount.toFixed(2)}</td>`; tbody.appendChild(tr); }); const ts = prods.reduce((s, p) => s + calculateSold(p) * (p.price || 0), 0); const inv = document.getElementById('inventoryTotalSales'); if (inv) inv.textContent = `$${ts.toFixed(2)}`; const dpc = document.getElementById('detailProductCount'); if (dpc) dpc.innerHTML = `<i class="fa-solid fa-boxes-stacked"></i> ${prods.length} Productos`; validateClosing(); }
+    function renderFinance() { const ts = calculateTotalSales(), inv = calculateInvestment(), gp = calculateGrossProfit(), disc = calculateSalaryDiscount(ts), np = gp - disc, m = getPeriodMultiplier(); document.getElementById('finTotalSales').textContent = `$${(ts*m).toFixed(2)}`; document.getElementById('finInvestment').textContent = `$${(inv*m).toFixed(2)}`; document.getElementById('finGrossProfit').textContent = `$${(gp*m).toFixed(2)}`; document.getElementById('finWorkerDiscount').textContent = `-$${(disc*m).toFixed(2)}`; document.getElementById('finNetProfit').textContent = `$${(np*m).toFixed(2)}`; document.getElementById('salaryInfoText').innerHTML = `<i class="fa-solid fa-circle-info"></i> Descuento actual: ${STATE.salary.type==='percentage' ? STATE.salary.value+'%' : '$'+STATE.salary.value} de las ventas totales`; const ws = document.getElementById('weekDaySelector'); if (STATE.chartPeriod === 'week') { ws.classList.remove('hidden'); renderWeekDayButtons(); } else ws.classList.add('hidden'); if (STATE.financeView === 'supervisor') document.getElementById('chartContainer')?.classList.add('hidden'); else { document.getElementById('chartContainer')?.classList.remove('hidden'); updateChart(); } const thead = document.getElementById('financeTableHead'), tbody = document.getElementById('financeTableBody'); thead.innerHTML = ''; tbody.innerHTML = ''; let prods = STATE.products; if (STATE.selectedProductId) prods = prods.filter(p => p.id === STATE.selectedProductId); if (STATE.selectedDay) { const d = STATE.salesHistory[STATE.currentAuditId]?.[STATE.selectedDay]; if (d) { const ids = d.products.filter(p => p.sold > 0).map(p => p.id); prods = prods.filter(p => ids.includes(p.id)); } const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']; document.getElementById('productTableTitle').textContent = `Ventas del ${days[new Date(STATE.selectedDay).getDay()]} (${STATE.selectedDay})`; } else { document.getElementById('productTableTitle').textContent = 'Gestión de Productos'; } if (STATE.financeView === 'investor') { thead.innerHTML = `<tr><th>Código</th><th>Producto</th><th>Costo</th><th>Margen %</th><th>Precio</th><th>Vendido</th><th>Inversión</th><th>Ganancia</th><th>Total</th></tr>`; prods.forEach(p => { const s = calculateSold(p), c = p.costPrice || 0, pr = p.price || 0; const changes = STATE.priceHistory[STATE.currentAuditId]?.[p.id] || []; const lastChange = changes.length ? changes[changes.length - 1] : null; tbody.innerHTML += `<tr class="${changes.length?'price-changed':''}"><td><input class="input-mini" value="${escapeHtml(p.code)}" onchange="updateProduct(${p.id},'code',this.value)"></td><td><input class="input-wide" value="${escapeHtml(p.name)}" onchange="updateProduct(${p.id},'name',this.value)"></td><td><input class="input-mini" type="number" value="${c.toFixed(2)}" onchange="updateProductCost(${p.id},this.value)"></td><td><input class="input-mini" type="number" value="${p.profitMargin||30}" onchange="updateProductMargin(${p.id},this.value)"></td><td class="text-primary">$${pr.toFixed(2)} ${lastChange?`<span class="change-tag">${lastChange.date}</span>`:''}</td><td class="text-accent font-bold">${s}</td><td class="text-secondary">$${(s*c).toFixed(2)}</td><td class="${(s*(pr-c))>=0?'text-success':'text-danger'} font-bold">$${(s*(pr-c)).toFixed(2)}</td><td class="font-bold" style="color:var(--text-primary);">$${(s*pr).toFixed(2)}</td></tr>`; }); } else { thead.innerHTML = `<tr><th>Código</th><th>Producto</th><th>Precio</th><th>Acción</th></tr>`; prods.forEach(p => { tbody.innerHTML += `<tr><td><input class="input-mini" value="${escapeHtml(p.code)}" onchange="updateProduct(${p.id},'code',this.value)"></td><td><input class="input-wide" value="${escapeHtml(p.name)}" onchange="updateProduct(${p.id},'name',this.value)"></td><td><input class="input-mini" type="number" value="${(p.price||0).toFixed(2)}" onchange="updateProductWithPriceCheck(${p.id},'price',this.value)"></td><td><button class="btn btn-danger btn-icon btn-sm" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button></td></tr>`; }); } }
+    function renderWeekDayButtons() { const c = document.getElementById('weekDayButtons'); if (!c) return; const names = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']; const today = new Date(), day = today.getDay(), mon = new Date(today); mon.setDate(today.getDate() - day + (day === 0 ? -6 : 1)); c.innerHTML = ''; names.forEach((n, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); const ds = d.toISOString().split('T')[0]; const data = STATE.salesHistory[STATE.currentAuditId]?.[ds]; const hasSales = data && data.totalSales > 0; const tile = document.createElement('div'); tile.className = `day-tile ${STATE.selectedDay===ds?'active':''} ${hasSales?'':'inactive'}`; tile.innerHTML = `<div class="d-name">${n}</div><div class="d-amount">${hasSales?`$${data.totalSales.toFixed(0)}`:'—'}</div><div class="d-date">${ds}</div>`; if (hasSales) tile.onclick = () => selectDay(ds); c.appendChild(tile); }); }
+    function selectDay(ds) { STATE.selectedDay = ds; saveAppState(); renderWeekDayButtons(); renderFinance(); renderInventory(); showToast(`Mostrando ventas del ${ds}`, 'info'); }
+    function updateChart() { const chartEl = document.getElementById('chartContainer'); if (!chartEl || chartEl.classList.contains('hidden')) return; const ctx = document.getElementById('salesChart').getContext('2d'); if (STATE.chartInstance) STATE.chartInstance.destroy(); let labels, data; if (STATE.chartPeriod === 'week' && STATE.selectedDay) { const d = STATE.salesHistory[STATE.currentAuditId]?.[STATE.selectedDay]; if (d) { const sp = d.products.filter(p => p.sold > 0); labels = sp.map(p => p.name.length > 14 ? p.name.substring(0, 11) + '…' : p.name); data = sp.map(p => p.sold); } else { labels = ['Sin ventas']; data = [0]; } } else { labels = STATE.products.map(p => p.name.length > 14 ? p.name.substring(0, 11) + '…' : p.name); data = STATE.products.map(p => calculateSold(p) * getPeriodMultiplier()); } Chart.defaults.color = '#4a5568'; STATE.chartInstance = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Unidades', data, backgroundColor: (ctx) => { const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300); g.addColorStop(0, 'rgba(59,130,246,0.9)'); g.addColorStop(1, 'rgba(139,92,246,0.4)'); return g; }, borderRadius: 6, borderSkipped: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141c2e', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, titleColor: '#e8edf7', bodyColor: '#8896b3', padding: 12, cornerRadius: 8 } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#4a5568', font: { size: 11 } } }, y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#4a5568', font: { size: 11 } } } }, onClick: (e, active) => { if (active.length) { const p = (STATE.chartPeriod === 'week' && STATE.selectedDay) ? STATE.salesHistory[STATE.currentAuditId]?.[STATE.selectedDay]?.products.filter(p => p.sold > 0)[active[0].index] : STATE.products[active[0].index]; if (p) selectProductFromChart(p); } else resetChartSelection(); } } }); }
+    function selectProductFromChart(p) { STATE.selectedProductId = p.id; renderFinance(); updateChart(); document.getElementById('resetSelectionContainer').classList.remove('hidden'); }
+    function resetChartSelection() { STATE.selectedProductId = null; renderFinance(); updateChart(); document.getElementById('resetSelectionContainer').classList.add('hidden'); }
+    function openPaymentsModal() { const m = document.getElementById('modalPaymentsAttributions'); m.classList.add('active'); STATE.isPaymentsModalOpen = true; saveModalState(); document.getElementById('attributionPercent').value = STATE.paymentsConfig.attributionPercent; document.getElementById('attributionBase').value = STATE.paymentsConfig.attributionBase; document.getElementById('attributionFrequency').value = STATE.paymentsConfig.attributionFrequency; document.getElementById('discountPercent').value = STATE.paymentsConfig.discountPercent; document.getElementById('licenseCost').value = STATE.paymentsConfig.licenseCost; document.getElementById('licensePaid').checked = STATE.paymentsConfig.licensePaid; document.getElementById('fiscoPercent').value = STATE.paymentsConfig.fiscoPercent; document.getElementById('attributionDate').value = new Date().toISOString().split('T')[0]; loadAttributionData(); }
+    function closePaymentsModal() { document.getElementById('modalPaymentsAttributions').classList.remove('active'); STATE.isPaymentsModalOpen = false; saveModalState(); }
+    function loadAttributionData() { const period = document.getElementById('attributionPeriod').value; const selDate = document.getElementById('attributionDate').value; const id = STATE.currentAuditId; let ts = 0, gp = 0, np = 0; if (period === 'day') { const d = STATE.salesHistory[id]?.[selDate]; if (d) { ts = d.totalSales; gp = d.grossProfit; np = d.netProfit; } } else if (period === 'week') { const sd = new Date(selDate), dy = sd.getDay(), mon = new Date(sd); mon.setDate(sd.getDate() - dy + (dy === 0 ? -6 : 1)); const wd = []; for (let i = 0; i < 7; i++) { const d2 = new Date(mon); d2.setDate(mon.getDate() + i); const ds = d2.toISOString().split('T')[0]; const day = STATE.salesHistory[id]?.[ds]; if (day) { ts += day.totalSales; gp += day.grossProfit; np += day.netProfit; wd.push({ date: ds, name: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][i], sales: day.totalSales }); } } renderWeekDaysDetail(wd); } else if (period === 'month') { const [y, mo] = selDate.split('-'); const h = STATE.salesHistory[id] || {}; Object.keys(h).filter(ds => ds.startsWith(`${y}-${mo}`)).forEach(ds => { ts += h[ds].totalSales; gp += h[ds].grossProfit; np += h[ds].netProfit; }); } else if (period === 'year') { const [y] = selDate.split('-'); const h = STATE.salesHistory[id] || {}; Object.keys(h).filter(ds => ds.startsWith(y)).forEach(ds => { ts += h[ds].totalSales; gp += h[ds].grossProfit; np += h[ds].netProfit; }); } else { ts = calculateTotalSales(); gp = calculateGrossProfit(); np = gp - calculateSalaryDiscount(ts); } if (period !== 'week') document.getElementById('weekDetailContainer').classList.add('hidden'); document.getElementById('attTotalSales').textContent = `$${ts.toFixed(2)}`; document.getElementById('attGrossProfit').textContent = `$${gp.toFixed(2)}`; document.getElementById('attNetProfit').textContent = `$${np.toFixed(2)}`; calculateAttributionWithValues(ts, gp, np); updateProvisionsWithValues(np); updateFiscoWithAccumulated(); }
+    function renderWeekDaysDetail(wd) { const c = document.getElementById('weekDaysContainer'); if (!wd.length) { document.getElementById('weekDetailContainer').classList.add('hidden'); return; } document.getElementById('weekDetailContainer').classList.remove('hidden'); c.innerHTML = ''; let wt = 0; wd.forEach(d => { wt += d.sales; c.innerHTML += `<div class="day-tile"><div class="d-name">${d.name}</div><div class="d-amount">$${d.sales.toFixed(2)}</div><div class="d-date">${d.date}</div></div>`; }); document.getElementById('weekTotalSales').textContent = `$${wt.toFixed(2)}`; }
+    function calculateAttributionWithValues(ts, gp, np) { const pct = parseFloat(document.getElementById('attributionPercent').value) || 0; const base = document.getElementById('attributionBase').value; const bAmt = base === 'sales' ? ts : base === 'net' ? np : gp; const calc = bAmt * (pct / 100); document.getElementById('calculatedAttribution').value = `$${calc.toFixed(2)}`; document.getElementById('adjustedAttribution').value = calc.toFixed(2); updateDiscountAmountWithGross(gp); }
+    function calculateAttribution() { const ts = parseFloat(document.getElementById('attTotalSales').textContent.replace('$', '')) || 0; const gp = parseFloat(document.getElementById('attGrossProfit').textContent.replace('$', '')) || 0; const np = parseFloat(document.getElementById('attNetProfit').textContent.replace('$', '')) || 0; calculateAttributionWithValues(ts, gp, np); }
+    function updateDiscountAmountWithGross(gp) { const pct = parseFloat(document.getElementById('discountPercent').value) || 0; const disc = gp * (pct / 100); document.getElementById('discountAmount').value = `$${disc.toFixed(2)}`; document.getElementById('remainingProfit').value = `$${(gp-disc).toFixed(2)}`; }
+    function updateDiscountAmount() { const gp = parseFloat(document.getElementById('attGrossProfit').textContent.replace('$', '')) || 0; updateDiscountAmountWithGross(gp); }
+    function updateProvisionsWithValues(np) { const lc = parseFloat(document.getElementById('licenseCost').value) || 0; document.getElementById('dailyProvision').value = `$${(lc/30).toFixed(2)}`; }
+    function updateFiscoWithAccumulated() { const h = STATE.salesHistory[STATE.currentAuditId] || {}; let acc = 0; Object.values(h).forEach(d => acc += d.netProfit || 0); const pct = parseFloat(document.getElementById('fiscoPercent').value) || 0, fisco = acc * (pct / 100); document.getElementById('accumulatedNetProfit').value = `$${acc.toFixed(2)}`; document.getElementById('fiscoAmount').value = `$${fisco.toFixed(2)}`; document.getElementById('monthlyFiscoProvision').value = `$${(fisco/12).toFixed(2)}`; STATE.paymentsConfig.fiscoPercent = pct; }
+    function calculateFisco() { updateFiscoWithAccumulated(); savePaymentsConfig(); showToast('Fisco calculado', 'success'); }
+    function applyAttributionAdjustment() { const adj = parseFloat(document.getElementById('adjustedAttribution').value) || 0; const calc = parseFloat(document.getElementById('calculatedAttribution').value.replace('$', '')) || 0; STATE.paymentsConfig.adjustedAttribution = adj; const diff = calc - adj; const el = document.getElementById('adjustmentInfo'); el.innerHTML = diff > 0 ? `<i class="fa-solid fa-circle-info"></i> Declarando $${diff.toFixed(2)} menos que lo calculado.` : diff < 0 ? `<i class="fa-solid fa-triangle-exclamation"></i> Declarando $${Math.abs(diff).toFixed(2)} más que lo calculado.` : `<i class="fa-solid fa-check"></i> Monto declarado coincide con el cálculo.`; savePaymentsConfig(); showToast('Ajuste aplicado', 'success'); }
+    function savePaymentsConfig() { STATE.paymentsConfig.attributionPercent = parseFloat(document.getElementById('attributionPercent').value) || 5; STATE.paymentsConfig.attributionBase = document.getElementById('attributionBase').value; STATE.paymentsConfig.attributionFrequency = document.getElementById('attributionFrequency').value; STATE.paymentsConfig.discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0; STATE.paymentsConfig.licenseCost = parseFloat(document.getElementById('licenseCost').value) || 0; STATE.paymentsConfig.licensePaid = document.getElementById('licensePaid').checked; localStorage.setItem(CONFIG.STORAGE_KEY_PAYMENTS, JSON.stringify(STATE.paymentsConfig)); showToast('Configuración guardada', 'success'); }
+    function recordPayment() { const amount = STATE.paymentsConfig.adjustedAttribution || parseFloat(document.getElementById('calculatedAttribution').value.replace('$', '')) || 0; const hist = JSON.parse(localStorage.getItem('ipv_payment_history') || '[]'); hist.push({ date: new Date().toISOString(), amount, frequency: STATE.paymentsConfig.attributionFrequency, period: document.getElementById('attributionPeriod').value, periodDate: document.getElementById('attributionDate').value }); localStorage.setItem('ipv_payment_history', JSON.stringify(hist)); showToast(`Pago de $${amount.toFixed(2)} registrado`, 'success'); closePaymentsModal(); }
+    window.updateProduct = (id, field, val) => { const p = STATE.products.find(x => x.id === id); if (!p) return; p[field] = field === 'price' || field === 'inicio' || field === 'baja' || field === 'finalReal' ? (parseFloat(val) || 0) : val; if (field === 'inicio' || field === 'baja') p.finalReal = (p.inicio || 0) - (p.baja || 0); saveData(); renderInventory(); renderFinance(); updateChart(); };
+    window.updateProductWithPriceCheck = (id, field, val) => { const p = STATE.products.find(x => x.id === id); if (!p) return; const oldP = p.price, newP = parseFloat(val) || 0; if (field === 'price' && oldP !== newP) { checkPriceChange(id, oldP, newP); showToast(`Precio: $${oldP} → $${newP}`, 'warning'); } p[field] = newP; saveData(); renderInventory(); renderFinance(); updateChart(); };
+    window.updateProductCost = (id, val) => { const p = STATE.products.find(x => x.id === id); if (!p) return; p.costPrice = parseFloat(val) || 0; p.price = calculateSalePrice(p.costPrice, p.profitMargin || 30); saveData(); renderFinance(); renderInventory(); updateChart(); };
+    window.updateProductMargin = (id, val) => { const p = STATE.products.find(x => x.id === id); if (!p) return; p.profitMargin = parseFloat(val) || 0; p.price = calculateSalePrice(p.costPrice || 0, p.profitMargin); saveData(); renderFinance(); renderInventory(); updateChart(); };
+    window.deleteProduct = (id) => { if (!confirm('¿Eliminar producto?')) return; STATE.products = STATE.products.filter(p => p.id !== id); if (STATE.selectedProductId === id) STATE.selectedProductId = null; saveData(); renderInventory(); renderFinance(); updateChart(); showToast('Producto eliminado', 'info'); };
+    window.openAudit = (id) => { STATE.currentAuditId = id; const a = STATE.audits.find(x => x.id === id); STATE.products = JSON.parse(JSON.stringify(a.products || [])); STATE.salary = a.salary || { type: 'percentage', value: 10 }; document.getElementById('detailTitle').textContent = a.businessName; document.getElementById('detailSubtitle').textContent = a.address; document.getElementById('workerNameInput').value = a.workerName || ''; document.getElementById('shiftInput').value = a.shift || ''; document.getElementById('salaryType').value = STATE.salary.type; document.getElementById('salaryValue').value = STATE.salary.value; document.getElementById('viewAuditsList').classList.add('hidden'); document.getElementById('viewAuditDetail').classList.remove('hidden'); const saved = loadAppState(); switchTab(saved?.currentTab || 'inventory'); saveAppState(); recordDailySale(); };
+    window.deleteAudit = (id) => { if (!confirm('¿Eliminar esta auditoría? Se perderán todos sus datos.')) return; if (STATE.currentAuditId === id) { STATE.currentAuditId = null; STATE.currentTab = 'inventory'; sessionStorage.removeItem(CONFIG.STORAGE_KEY_STATE); document.getElementById('viewAuditDetail').classList.add('hidden'); document.getElementById('viewAuditsList').classList.remove('hidden'); } STATE.audits = STATE.audits.filter(a => a.id !== id); if (STATE.salesHistory[id]) { delete STATE.salesHistory[id]; localStorage.setItem('ipv_sales_history', JSON.stringify(STATE.salesHistory)); } if (STATE.priceHistory[id]) { delete STATE.priceHistory[id]; localStorage.setItem('ipv_price_history', JSON.stringify(STATE.priceHistory)); } saveData(); renderAuditList(); showToast('Auditoría eliminada correctamente', 'success'); };
+    function switchTab(tab) { STATE.currentTab = tab; saveAppState(); document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active')); ['contentInventory', 'contentFinance', 'contentReport'].forEach(id => document.getElementById(id).classList.add('hidden')); if (tab === 'inventory') { document.getElementById('tabInventory').classList.add('active'); document.getElementById('contentInventory').classList.remove('hidden'); renderInventory(); } else if (tab === 'finance') { document.getElementById('tabFinance').classList.add('active'); document.getElementById('contentFinance').classList.remove('hidden'); renderFinance(); } else if (tab === 'report') { document.getElementById('tabReport').classList.add('active'); document.getElementById('contentReport').classList.remove('hidden'); preparePrintData(); } }
+    function preparePrintData() { const a = STATE.audits.find(x => x.id === STATE.currentAuditId); if (!a) return; const ts = calculateTotalSales(), inv = calculateInvestment(), gp = calculateGrossProfit(), disc = calculateSalaryDiscount(ts), np = gp - disc; document.getElementById('printBusinessName').textContent = a.businessName; document.getElementById('printAddress').textContent = a.address; document.getElementById('printDateTime').textContent = new Date().toLocaleString(); document.getElementById('printWorker').textContent = a.workerName || 'N/A'; document.getElementById('printShift').textContent = a.shift || 'N/A'; document.getElementById('printTotalSales').textContent = `$${ts.toFixed(2)}`; document.getElementById('printTotalInvestment').textContent = `$${inv.toFixed(2)}`; document.getElementById('printGrossProfit').textContent = `$${gp.toFixed(2)}`; document.getElementById('printWorkerDiscount').textContent = `-$${disc.toFixed(2)}`; document.getElementById('printNetProfit').textContent = `$${np.toFixed(2)}`; document.getElementById('printCashAmount').textContent = document.getElementById('cashReceived')?.value || '0'; document.getElementById('printTransferAmount').textContent = document.getElementById('transferAmount')?.value || '0'; const tb = document.getElementById('printTableBody'); tb.innerHTML = ''; STATE.products.forEach(p => { const s = calculateSold(p), f = p.finalReal !== undefined ? p.finalReal : (p.inicio - p.baja); tb.innerHTML += `<tr><td style="border:1px solid #ccc;padding:8px;">${escapeHtml(p.code)}</td><td style="border:1px solid #ccc;padding:8px;">${escapeHtml(p.name)}</td><td style="border:1px solid #ccc;padding:8px;">$${(p.costPrice||0).toFixed(2)}</td><td style="border:1px solid #ccc;padding:8px;">${p.profitMargin||30}%</td><td style="border:1px solid #ccc;padding:8px;">${p.inicio||0}</td><td style="border:1px solid #ccc;padding:8px;">${f}</td><td style="border:1px solid #ccc;padding:8px;">${s}</td><td style="border:1px solid #ccc;padding:8px;">$${(p.price||0).toFixed(2)}</td><td style="border:1px solid #ccc;padding:8px;">$${(s*(p.price||0)).toFixed(2)}</td></tr>`; }); }
+    function downloadPDF() { showToast('Generando PDF…', 'info'); const el = document.getElementById('printArea'); html2pdf().from(el).save(`IPV_Reporte_${Date.now()}.pdf`).then(() => showToast('PDF descargado', 'success')); }
+    
+    // ========== SISTEMA DE ACCESO CORREGIDO ==========
+    function initAccessSystem() {
+      const mode = localStorage.getItem(CONFIG.STORAGE_KEY_MODE);
+      const start = localStorage.getItem(CONFIG.STORAGE_KEY_START);
+      
+      if (!mode || !start) {
+        showAccessScreen();
+        return;
+      }
+      
+      if (mode === 'premium') {
+        unlockApp();
+        return;
+      }
+      
+      if (mode === 'trial') {
+        const elapsed = Date.now() - parseInt(start);
+        if (elapsed >= CONFIG.TRIAL_MS) {
+          localStorage.removeItem(CONFIG.STORAGE_KEY_MODE);
+          localStorage.removeItem(CONFIG.STORAGE_KEY_START);
+          showAccessScreen("Periodo de prueba finalizado. Adquiere una licencia Premium.");
+        } else {
+          unlockApp();
+        }
+        return;
+      }
+      
+      showAccessScreen();
+    }
+    
+    function showAccessScreen(msg = '') {
+      document.getElementById('modalAccess').classList.add('active');
+      document.getElementById('mainApp').classList.add('hidden');
+      document.getElementById('authStep1').classList.remove('hidden');
+      document.getElementById('authStep2').classList.add('hidden');
+      if (msg) {
+        const el = document.getElementById('accessError');
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+    }
+    
+    function unlockApp() {
+      document.getElementById('modalAccess').classList.remove('active');
+      document.getElementById('mainApp').classList.remove('hidden');
+      startTimerUI();
+      loadData();
+      initBreakdown();
+    }
+    
+    function logoutSystem() {
+      if (confirm('¿Cerrar sesión? Deberás ingresar nuevamente la contraseña.')) {
+        localStorage.removeItem(CONFIG.STORAGE_KEY_MODE);
+        localStorage.removeItem(CONFIG.STORAGE_KEY_START);
+        sessionStorage.clear();
+        location.reload();
+      }
+    }
+    
+    function startTimerUI() {
+      updateTimerUI();
+      if (STATE.timerInterval) clearInterval(STATE.timerInterval);
+      STATE.timerInterval = setInterval(updateTimerUI, 60000);
+    }
+    
+    function updateTimerUI() {
+      const mode = localStorage.getItem(CONFIG.STORAGE_KEY_MODE);
+      const start = localStorage.getItem(CONFIG.STORAGE_KEY_START);
+      const badge = document.getElementById('mainTimerBadge');
+      if (mode === 'premium') {
+        document.getElementById('timerText').textContent = 'Premium Activo';
+        badge.classList.add('accent');
+      } else {
+        const rem = CONFIG.TRIAL_MS - (Date.now() - parseInt(start || 0));
+        if (rem <= 0) {
+          document.getElementById('timerText').textContent = 'Expirado';
+          badge.classList.add('expired');
+        } else {
+          document.getElementById('timerText').textContent = `Prueba: ${Math.ceil(rem/(1000*60*60*24))} días`;
+        }
+      }
+    }
+    
+    window.openTimerModal = () => {
+      const mode = localStorage.getItem(CONFIG.STORAGE_KEY_MODE);
+      document.getElementById('infoModeDisplay').textContent = mode === 'premium' ? 'PREMIUM' : 'PRUEBA';
+      if (mode === 'premium') {
+        document.getElementById('infoTimeDisplay').textContent = 'Sin límite';
+      } else {
+        const start = parseInt(localStorage.getItem(CONFIG.STORAGE_KEY_START) || 0);
+        const rem = CONFIG.TRIAL_MS - (Date.now() - start);
+        document.getElementById('infoTimeDisplay').textContent = `${Math.ceil(rem/(1000*60*60*24))} días`;
+      }
+      document.getElementById('modalTimerInfo').classList.add('active');
+    };
+    
+    window.closeTimerModal = () => document.getElementById('modalTimerInfo').classList.remove('active');
+    window.selectAccessMode = (mode) => {
+      localStorage.setItem(CONFIG.STORAGE_KEY_MODE, mode);
+      localStorage.setItem(CONFIG.STORAGE_KEY_START, Date.now().toString());
+      unlockApp();
+    };
+    window.validateClosing = validateClosing;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAccessSystem();
+
+      document.getElementById('btnBack').addEventListener('click', () => {
+        STATE.currentAuditId = null;
+        STATE.currentTab = 'inventory';
+        sessionStorage.removeItem(CONFIG.STORAGE_KEY_STATE);
+        document.getElementById('viewAuditDetail').classList.add('hidden');
+        document.getElementById('viewAuditsList').classList.remove('hidden');
+        renderAuditList();
+      });
+
+      document.querySelectorAll('[data-tab]').forEach(t => t.addEventListener('click', e => switchTab(e.currentTarget.dataset.tab)));
+
+      document.getElementById('btnSaveFinalAsStart').addEventListener('click', () => {
+        STATE.products = STATE.products.map(p => {
+          const f = (p.finalReal !== undefined && p.finalReal !== null) ? p.finalReal : (p.inicio - p.baja);
+          return { ...p, inicio: f, baja: 0, finalReal: f };
+        });
+        saveData();
+        renderInventory();
+        renderFinance();
+        showToast('Stock actualizado', 'success');
+      });
+
+      document.getElementById('viewInvestorBtn').addEventListener('click', function() {
+        STATE.financeView = 'investor';
+        this.classList.add('btn-primary');
+        this.classList.remove('btn-ghost');
+        document.getElementById('viewSupervisorBtn').classList.remove('btn-primary');
+        document.getElementById('viewSupervisorBtn').classList.add('btn-ghost');
+        renderFinance();
+      });
+
+      document.getElementById('viewSupervisorBtn').addEventListener('click', function() {
+        STATE.financeView = 'supervisor';
+        this.classList.add('btn-primary');
+        this.classList.remove('btn-ghost');
+        document.getElementById('viewInvestorBtn').classList.remove('btn-primary');
+        document.getElementById('viewInvestorBtn').classList.add('btn-ghost');
+        renderFinance();
+      });
+
+      document.getElementById('btnApplySalary').addEventListener('click', () => {
+        STATE.salary.type = document.getElementById('salaryType').value;
+        STATE.salary.value = parseFloat(document.getElementById('salaryValue').value) || 0;
+        saveData();
+        renderFinance();
+        renderInventory();
+        showToast('Salario actualizado', 'success');
+      });
+
+      document.querySelectorAll('.period-btn').forEach(btn => btn.addEventListener('click', e => {
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        STATE.chartPeriod = e.target.dataset.period;
+        STATE.selectedDay = null;
+        saveAppState();
+        resetChartSelection();
+        updateChart();
+        renderFinance();
+      }));
+
+      document.getElementById('btnResetChartSelection').addEventListener('click', resetChartSelection);
+
+      document.getElementById('btnAddProductFinance').addEventListener('click', () => {
+        STATE.products.push({
+          id: Date.now(),
+          code: 'NVO',
+          name: 'Nuevo Producto',
+          price: 0,
+          costPrice: 0,
+          profitMargin: 30,
+          inicio: 0,
+          baja: 0,
+          finalReal: 0
+        });
+        saveData();
+        renderFinance();
+        renderInventory();
+        updateChart();
+        showToast('Producto agregado', 'info');
+      });
+
+      document.getElementById('btnOpenCreateAudit').addEventListener('click', () => document.getElementById('modalCreateAudit').classList.add('active'));
+      document.getElementById('btnCancelCreateAudit').addEventListener('click', () => document.getElementById('modalCreateAudit').classList.remove('active'));
+      document.getElementById('btnCancelCreateAudit2').addEventListener('click', () => document.getElementById('modalCreateAudit').classList.remove('active'));
+      document.getElementById('btnConfirmCreateAudit').addEventListener('click', () => {
+        const name = document.getElementById('newAuditName').value.trim();
+        const addr = document.getElementById('newAuditAddress').value.trim();
+        if (!name || !addr) {
+          showToast('Complete todos los campos', 'error');
+          return;
+        }
+        STATE.audits.push({
+          id: Date.now(),
+          businessName: name,
+          address: addr,
+          workerName: '',
+          shift: '',
+          salary: { type: 'percentage', value: 10 },
+          products: []
+        });
+        saveData();
+        renderAuditList();
+        document.getElementById('modalCreateAudit').classList.remove('active');
+        document.getElementById('newAuditName').value = '';
+        document.getElementById('newAuditAddress').value = '';
+        showToast('Auditoría creada', 'success');
+      });
+
+      document.getElementById('btnAccess').addEventListener('click', () => {
+        if (document.getElementById('accessPassword').value === STATE.password) {
+          document.getElementById('authStep1').classList.add('hidden');
+          document.getElementById('authStep2').classList.remove('hidden');
+          document.getElementById('accessError').classList.add('hidden');
+        } else {
+          document.getElementById('accessError').classList.remove('hidden');
+          showToast('Contraseña incorrecta', 'error');
+        }
+      });
+
+      document.getElementById('accessPassword').addEventListener('keypress', e => {
+        if (e.key === 'Enter') document.getElementById('btnAccess').click();
+      });
+
+      document.getElementById('btnResetSystem').addEventListener('click', () => {
+        if (confirm('¿Reiniciar el sistema? Esto cerrará la sesión actual pero mantendrá todas las auditorías.')) {
+          if (prompt('Para confirmar, ingrese la contraseña de administrador:') === STATE.password) {
+            localStorage.removeItem(CONFIG.STORAGE_KEY_MODE);
+            localStorage.removeItem(CONFIG.STORAGE_KEY_START);
+            sessionStorage.clear();
+            location.reload();
+          } else {
+            showToast('Contraseña incorrecta', 'error');
+          }
+        }
+      });
+
+      document.getElementById('btnResetBreakdown').addEventListener('click', resetBreakdown);
+      document.getElementById('btnOpenPaymentsAttributions').addEventListener('click', openPaymentsModal);
+      document.getElementById('attributionPeriod').addEventListener('change', loadAttributionData);
+      document.getElementById('btnLoadAttributionData').addEventListener('click', loadAttributionData);
+      document.getElementById('attributionPercent').addEventListener('input', calculateAttribution);
+      document.getElementById('attributionBase').addEventListener('change', calculateAttribution);
+      document.getElementById('discountPercent').addEventListener('input', updateDiscountAmount);
+      document.getElementById('btnApplyAdjustment').addEventListener('click', applyAttributionAdjustment);
+      document.getElementById('btnSaveLicenseConfig').addEventListener('click', savePaymentsConfig);
+      document.getElementById('btnCalculateFisco').addEventListener('click', calculateFisco);
+      document.getElementById('btnRecordPayment').addEventListener('click', recordPayment);
+      
+      // Botones de cerrar sesión
+      const logoutBtns = document.querySelectorAll('#btnLogout, #btnLogoutDetail');
+      logoutBtns.forEach(btn => {
+        if (btn) btn.addEventListener('click', logoutSystem);
+      });
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+          STATE.isPaymentsModalOpen = false;
+          saveModalState();
+        }
+      });
+    });
+  </script>
+  
+  <!-- SERVICE WORKER REGISTRATION -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('SW registrado:', reg.scope))
+          .catch(err => console.log('SW error:', err));
+      });
+    }
+  </script>
+</body>
+</html>
