@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serenidad Masajes | Bienestar y Salud</title>
+    <meta name="description" content="Reserva tu turno de masaje profesional. Relajante, deportivo y más.">
+    
+    <!-- Fuentes e Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --primary: #2C6E63; /* Verde azulado relajante */
+            --primary-dark: #1F4F47;
+            --secondary: #D8E2DC; /* Beige grisáceo suave */
+            --accent: #FFE5D9; /* Coral suave para acentos */
+            --text-dark: #2D3436;
+            --text-light: #636E72;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4DB6AC;
+            --primary-dark: #00897B;
+            --secondary: #263238;
+            --accent: #5D4037;
+            --text-dark: #ECEFF1;
+            --text-light: #B0BEC5;
+            --white: #37474F;
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            transition: var(--transition);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- UI COMPONENTS --- */
+        button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- HEADER & NAV --- */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 500; transition: var(--transition); }
+        .nav-links a:hover { color: var(--primary); }
+        
+        .theme-toggle { background: none; color: var(--text-dark); font-size: 1.2rem; }
+
+        /* --- HERO SECTION --- */
+        #hero {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://picsum.photos/seed/massagehero/1920/1080');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding-top: 70px;
+        }
+
+        .hero-content h1 { font-size: 3rem; margin-bottom: 15px; text-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .hero-content p { font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        /* --- SERVICES GRID --- */
+        #servicios { padding: 80px 0; }
+        .section-title { text-align: center; margin-bottom: 50px; font-size: 2rem; color: var(--primary); }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .service-card:hover { transform: translateY(-10px); }
+
+        .card-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .card-body { padding: 25px; }
+        .card-price { position: absolute; top: 20px; right: 20px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; }
+        .card-title { font-size: 1.4rem; margin-bottom: 10px; color: var(--text-dark); }
+        .card-features { list-style: none; margin-bottom: 20px; font-size: 0.9rem; color: var(--text-light); }
+        .card-features li::before { content: "•"; color: var(--primary); margin-right: 5px; }
+
+        /* --- MODAL --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal.active { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background: var(--white);
+            width: 90%; max-width: 900px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; background: none; color: var(--text-dark); z-index: 10; }
+
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; }
+        .modal-media { background: black; height: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+        .modal-info { padding: 40px; }
+
+        @media(max-width: 768px) { .modal-grid { grid-template-columns: 1fr; } }
+
+        /* --- BOOKING FORM --- */
+        .booking-form { display: grid; gap: 20px; margin-top: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.9rem; }
+        .form-control {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            background: var(--secondary); color: var(--text-dark);
+        }
+        .checkbox-group { display: flex; gap: 15px; flex-wrap: wrap; }
+        .checkbox-item { display: flex; align-items: center; gap: 5px; background: var(--secondary); padding: 5px 10px; border-radius: 15px; font-size: 0.85rem; }
+
+        /* --- ADMIN PANEL --- */
+        #admin-panel { display: none; padding-top: 100px; padding-bottom: 50px; }
+        .admin-login {
+            max-width: 400px; margin: 150px auto; background: var(--white); padding: 30px;
+            border-radius: var(--radius); box-shadow: var(--shadow); text-align: center;
+        }
+        
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 8px 16px; background: #ddd; border-radius: 20px; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
+        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .data-table th { background: var(--secondary); color: var(--primary); }
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; color: white; }
+        .status-pendiente { background: #f39c12; }
+        .status-confirmada { background: #27ae60; }
+        .status-cancelada { background: #c0392b; }
+
+        /* --- CHATBOT --- */
+        #chatbot-widget {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1500;
+        }
+        .chat-toggle {
+            width: 60px; height: 60px; border-radius: 50%; background: var(--primary);
+            color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: var(--transition);
+        }
+        .chat-toggle:hover { transform: scale(1.1); }
+        
+        .chat-window {
+            position: absolute; bottom: 80px; right: 0; width: 320px; height: 400px;
+            background: var(--white); border-radius: var(--radius);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2); display: none; flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header { background: var(--primary); color: white; padding: 15px; font-weight: 600; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: var(--secondary); }
+        .message { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 0.9rem; }
+        .bot-msg { background: white; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .user-msg { background: var(--primary); color: white; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 2px; }
+        .chat-input-area { padding: 10px; background: white; display: flex; border-top: 1px solid #eee; }
+        .chat-input { flex: 1; border: none; padding: 8px; outline: none; }
+
+        /* --- TOAST & LOADER --- */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--text-dark); color: white; padding: 12px 24px;
+            border-radius: 30px; z-index: 3000; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .toast.show { opacity: 1; top: 40px; }
+
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
+            border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Utility */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">Mensaje aquí</div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo" id="nav-logo">Serenidad</div>
+                <ul class="nav-links">
+                    <li><a href="#" onclick="app.showSection('home')">Inicio</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#footer">Contacto</a></li>
+                    <li><button class="theme-toggle" onclick="app.toggleTheme()"><i class="fas fa-moon"></i></button></li>
+                    <li><a href="#" onclick="app.showAdminLogin()" style="color: var(--primary); font-size:0.9rem;"><i class="fas fa-lock"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+        <!-- HERO -->
+        <section id="hero">
+            <div class="container hero-content">
+                <h1 id="hero-title">Cargando...</h1>
+                <p id="hero-desc">...</p>
+                <a href="#servicios" class="btn btn-primary">Ver Servicios <i class="fas fa-arrow-down"></i></a>
+            </div>
+        </section>
+
+        <!-- SERVICIOS -->
+        <section id="servicios" class="container">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <div id="services-loader" class="loader"></div>
+            <div class="services-grid" id="services-grid">
+                <!-- Se llena con JS -->
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer id="footer" style="background: var(--text-dark); color: white; padding: 40px 0; margin-top: 50px;">
+            <div class="container" style="text-align: center;">
+                <p id="footer-address" style="margin-bottom: 10px; color: #ccc;">Dirección cargando...</p>
+                <p>&copy; 2023 Serenidad Masajes. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- ADMIN PANEL (Oculto por defecto) -->
+    <section id="admin-panel" class="container">
+        <div class="dashboard-header">
+            <h2>Panel de Administración</h2>
+            <button class="btn btn-outline" onclick="app.showSection('home')">Salir</button>
+        </div>
+
+        <div class="admin-login" id="admin-login-form">
+            <h3>Acceso Seguro</h3>
+            <div class="form-group">
+                <input type="password" id="admin-pass" class="form-control" placeholder="Contraseña Maestra">
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="admin.login()">Ingresar</button>
+            <p id="login-error" style="color:red; font-size:0.8rem; margin-top:10px; display:none;">Contraseña incorrecta.</p>
+        </div>
+
+        <div id="admin-dashboard" class="hidden">
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="admin.switchTab('reservas')">Reservas</button>
+                <button class="tab-btn" onclick="admin.switchTab('servicios')">Servicios</button>
+                <button class="tab-btn" onclick="admin.switchTab('config')">Configuración</button>
+            </div>
+
+            <!-- Tab: Reservas -->
+            <div id="tab-reservas" class="tab-content">
+                <h3>Gestión de Reservas</h3>
+                <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Servicio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservas-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Servicios (Simplificado) -->
+            <div id="tab-servicios" class="tab-content hidden">
+                <h3>Crear Nuevo Servicio</h3>
+                <div class="booking-form" style="max-width: 500px;">
+                    <input type="text" id="new-serv-name" class="form-control" placeholder="Nombre del Servicio">
+                    <input type="number" id="new-serv-price" class="form-control" placeholder="Precio">
+                    <textarea id="new-serv-desc" class="form-control" placeholder="Descripción"></textarea>
+                    <button class="btn btn-primary" onclick="admin.addService()">Agregar Servicio</button>
+                </div>
+                <h4 style="margin-top:20px;">Servicios Activos</h4>
+                <ul id="admin-services-list" style="list-style:none; padding-left:0;"></ul>
+            </div>
+
+            <!-- Tab: Config -->
+            <div id="tab-config" class="tab-content hidden">
+                <h3>Configuración del Sitio</h3>
+                <div class="booking-form" style="max-width: 500px;">
+                    <div class="form-group">
+                        <label>Dirección del Salón</label>
+                        <input type="text" id="conf-address" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Título Hero</label>
+                        <input type="text" id="conf-title" class="form-control">
+                    </div>
+                    <button class="btn btn-primary" onclick="admin.saveConfig()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL SERVICIO -->
+    <div id="service-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="ui.closeModal()">&times;</button>
+            <div class="modal-grid">
+                <div class="modal-media">
+                    <!-- Video/Image Placeholder -->
+                    <img id="m-img" src="" alt="Video cover" style="width:100%; height:100%; object-fit:cover; opacity:0.8;">
+                    <div style="position:absolute; font-size:3rem; color:white;"><i class="fas fa-play-circle"></i></div>
+                </div>
+                <div class="modal-info">
+                    <h2 id="m-title" style="margin-bottom:10px; color:var(--primary);">Nombre Servicio</h2>
+                    <h3 id="m-price" style="margin-bottom:15px;">$0</h3>
+                    <p id="m-desc" style="margin-bottom:20px; color:var(--text-light);">Descripción...</p>
+                    
+                    <h4 style="margin-bottom:10px;">Beneficios:</h4>
+                    <ul id="m-effects" style="margin-bottom:20px; padding-left:20px; color:var(--text-dark);"></ul>
+
+                    <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+                    <h3 style="margin-bottom:15px;">Reservar Turno</h3>
+                    <form id="booking-form" onsubmit="app.submitBooking(event)">
+                        <input type="hidden" id="bk-service-id">
+                        <input type="hidden" id="bk-service-name">
+                        
+                        <div class="booking-form">
+                            <div class="form-group">
+                                <label>Nombre Completo</label>
+                                <input type="text" id="bk-name" class="form-control" required>
+                            </div>
+                            <div class="form-group" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                <div>
+                                    <label>Email</label>
+                                    <input type="email" id="bk-email" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label>Teléfono</label>
+                                    <input type="tel" id="bk-phone" class="form-control" required pattern="[0-9+]{8,15}">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Modalidad</label>
+                                <select id="bk-type" class="form-control" onchange="app.toggleAddressField()">
+                                    <option value="salon">En el Salón</option>
+                                    <option value="domicilio">A Domicilio (+ costo)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="address-group" style="display:none;">
+                                <label>Tu Dirección</label>
+                                <input type="text" id="bk-address" class="form-control" placeholder="Calle, número, ciudad...">
+                            </div>
+
+                            <div class="form-group" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                <div>
+                                    <label>Fecha</label>
+                                    <input type="date" id="bk-date" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label>Hora</label>
+                                    <input type="time" id="bk-time" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mejoras (Opcional)</label>
+                                <div id="bk-upgrades" class="checkbox-group">
+                                    <!-- JS renders checkboxes here -->
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px;">
+                                CONFIRMAR RESERVA
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHATBOT -->
+    <div id="chatbot-widget">
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">Asistente Virtual</div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-msg">Hola, soy tu asistente. ¿Buscas relajación o alivio para dolor muscular?</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Escribe aquí..." onkeypress="chat.handleEnter(event)">
+                <button onclick="chat.sendMessage()" style="background:none; border:none; color:var(--primary);"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button class="chat-toggle" onclick="chat.toggle()">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- CONFIG & STATE ---
+        const API_URL = '/api'; // Cambiar a producción en Render
+        const state = {
+            services: [],
+            config: {},
+            currentService: null,
+            adminToken: localStorage.getItem('adminToken') || null
+        };
+
+        // --- APP CONTROLLER ---
+        const app = {
+            init: async () => {
+                ui.showToast('Cargando información...', 2000);
+                await Promise.all([app.fetchConfig(), app.fetchServices()]);
+                ui.initTheme();
+            },
+
+            fetchConfig: async () => {
+                try {
+                    const res = await fetch(`${API_URL}/configuracion`);
+                    const data = await res.json();
+                    state.config = data;
+                    ui.renderConfig(data);
+                } catch (e) { console.error(e); }
+            },
+
+            fetchServices: async () => {
+                try {
+                    const res = await fetch(`${API_URL}/servicios`);
+                    const data = await res.json();
+                    state.services = data;
+                    ui.renderServices(data);
+                    document.getElementById('services-loader').style.display = 'none';
+                } catch (e) { console.error(e); }
+            },
+
+            openServiceModal: (id) => {
+                const service = state.services.find(s => s.id === id);
+                if (!service) return;
+                state.currentService = service;
+                ui.openModal(service);
+            },
+
+            toggleAddressField: () => {
+                const type = document.getElementById('bk-type').value;
+                document.getElementById('address-group').style.display = type === 'domicilio' ? 'block' : 'none';
+            },
+
+            submitBooking: async (e) => {
+                e.preventDefault();
+                
+                // Validaciones básicas
+                const phone = document.getElementById('bk-phone').value;
+                if (!/^[0-9+]{8,15}$/.test(phone)) return ui.showToast('Teléfono inválido');
+
+                const date = document.getElementById('bk-date').value;
+                const selectedDate = new Date(date);
+                const now = new Date();
+                now.setHours(0,0,0,0);
+                if (selectedDate < now) return ui.showToast('La fecha debe ser futura');
+
+                // Recoger mejoras
+                const checkboxes = document.querySelectorAll('input[name="upgrade"]:checked');
+                const upgrades = Array.from(checkboxes).map(cb => JSON.parse(cb.value));
+
+                const bookingData = {
+                    servicio_id: state.currentService.id,
+                    nombre_cliente: document.getElementById('bk-name').value,
+                    email: document.getElementById('bk-email').value,
+                    telefono: phone,
+                    tipo_servicio: document.getElementById('bk-type').value,
+                    direccion: document.getElementById('bk-address').value || state.config.direccion_salon,
+                    fecha: date,
+                    hora: document.getElementById('bk-time').value,
+                    mejoras_seleccionadas: upgrades
+                };
+
+                try {
+                    ui.showToast('Procesando reserva...', 10000);
+                    const res = await fetch(`${API_URL}/reservas`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bookingData)
+                    });
+                    
+                    if (res.ok) {
+                        ui.showToast('¡Reserva exitosa! Te contactaremos pronto.');
+                        ui.closeModal();
+                        document.getElementById('booking-form').reset();
+                    } else {
+                        ui.showToast('Error al reservar. Intenta nuevamente.');
+                    }
+                } catch (e) {
+                    ui.showToast('Error de conexión.');
+                }
+            },
+
+            showSection: (section) => {
+                if (section === 'home') {
+                    document.getElementById('main-content').classList.remove('hidden');
+                    document.getElementById('admin-panel').style.display = 'none';
+                }
+            },
+
+            showAdminLogin: () => {
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('admin-login-form').classList.remove('hidden');
+                document.getElementById('admin-dashboard').classList.add('hidden');
+            },
+
+            toggleTheme: () => {
+                const body = document.body;
+                const current = body.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                body.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+            }
+        };
+
+        // --- UI HELPERS ---
+        const ui = {
+            renderConfig: (data) => {
+                if(data.titulo) document.getElementById('hero-title').innerText = data.titulo;
+                if(data.subtitulo) document.getElementById('hero-desc').innerText = data.subtitulo;
+                if(data.direccion_salon) document.getElementById('footer-address').innerText = data.direccion_salon;
+                document.getElementById('nav-logo').innerText = (data.titulo || 'Serenidad').split(' ')[0];
+            },
+
+            renderServices: (services) => {
+                const grid = document.getElementById('services-grid');
+                grid.innerHTML = services.map(s => `
+                    <div class="service-card" onclick="app.openServiceModal(${s.id})">
+                        <span class="card-price">$${s.precio}</span>
+                        <img src="${s.imagen_url || `https://picsum.photos/seed/${s.id}/400/300`}" class="card-img" alt="${s.nombre}">
+                        <div class="card-body">
+                            <h3 class="card-title">${s.nombre}</h3>
+                            <ul class="card-features">
+                                ${(s.caracteristicas || []).slice(0, 3).map(c => `<li>${c}</li>`).join('')}
+                            </ul>
+                            <span style="color:var(--primary); font-size:0.9rem; font-weight:600;">Ver detalles &rarr;</span>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            openModal: (service) => {
+                document.getElementById('m-title').innerText = service.nombre;
+                document.getElementById('m-price').innerText = `$${service.precio}`;
+                document.getElementById('m-desc').innerText = service.descripcion_detallada;
+                document.getElementById('m-img').src = service.imagen_url || `https://picsum.photos/seed/${service.id}/600/400`;
+                document.getElementById('m-effects').innerHTML = (service.efectos || []).map(e => `<li>${e}</li>`).join('');
+                
+                // Set Booking Defaults
+                document.getElementById('bk-service-id').value = service.id;
+                document.getElementById('bk-service-name').value = service.nombre;
+                
+                // Render Upgrades
+                const upgradesContainer = document.getElementById('bk-upgrades');
+                const improvements = service.mejoras || [];
+                if (improvements.length === 0) {
+                    upgradesContainer.innerHTML = '<span style="font-size:0.8rem; color:#aaa;">No hay mejoras disponibles</span>';
+                } else {
+                    upgradesContainer.innerHTML = improvements.map((imp, idx) => `
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="upgrade" value='${JSON.stringify(imp)}'>
+                            ${imp.nombre} (+$${imp.precio})
+                        </label>
+                    `).join('');
+                }
+
+                const modal = document.getElementById('service-modal');
+                modal.classList.add('active');
+            },
+
+            closeModal: () => {
+                document.getElementById('service-modal').classList.remove('active');
+            },
+
+            showToast: (msg, duration = 3000) => {
+                const toast = document.getElementById('toast');
+                toast.innerText = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), duration);
+            },
+
+            initTheme: () => {
+                const saved = localStorage.getItem('theme');
+                if (saved) document.body.setAttribute('data-theme', saved);
+            }
+        };
+
+        // --- ADMIN CONTROLLER ---
+        const admin = {
+            attempts: 0,
+            
+            login: async () => {
+                const pass = document.getElementById('admin-pass').value;
+                if (admin.attempts >= 3) return ui.showToast('Bloqueo temporal por seguridad.');
+                
+                try {
+                    // Usamos endpoint seguro (simulado aquí enviando header)
+                    const res = await fetch(`${API_URL}/auth/admin`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${pass}` }
+                    });
+                    
+                    if (res.ok) { // Asumimos que si el server no responde 401, es ok
+                        state.adminToken = pass;
+                        localStorage.setItem('adminToken', pass);
+                        admin.showDashboard();
+                    } else {
+                        admin.attempts++;
+                        document.getElementById('login-error').style.display = 'block';
+                    }
+                } catch (e) {
+                    // Fallback para demo si endpoint no existe en server real simple
+                    // En producción real, borrar este catch y manejar error real
+                    if (pass === 'admin123') { // Demo password
+                        admin.showDashboard();
+                    } else {
+                        admin.attempts++;
+                        document.getElementById('login-error').style.display = 'block';
+                    }
+                }
+            },
+
+            showDashboard: () => {
+                document.getElementById('admin-login-form').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                admin.loadReservas();
+                admin.loadServicesForAdmin();
+            },
+
+            switchTab: (tabName) => {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
+            },
+
+            loadReservas: async () => {
+                const res = await fetch(`${API_URL}/admin/reservas`, {
+                    headers: { 'Authorization': `Bearer ${state.adminToken}` }
+                });
+                const data = await res.json();
+                const tbody = document.getElementById('reservas-table-body');
+                tbody.innerHTML = data.map(r => `
+                    <tr>
+                        <td>${r.fecha} ${r.hora}</td>
+                        <td>${r.nombre_cliente}<br><small>${r.telefono}</small></td>
+                        <td>${r.servicios ? r.servicios.nombre : 'Servicio #' + r.servicio_id}</td>
+                        <td><span class="status-badge status-${r.estado}">${r.estado}</span></td>
+                        <td>
+                            <button onclick="admin.updateStatus(${r.id}, 'confirmada')" title="Confirmar"><i class="fas fa-check" style="color:green"></i></button>
+                            <button onclick="admin.updateStatus(${r.id}, 'cancelada')" title="Cancelar"><i class="fas fa-times" style="color:red"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            },
+
+            updateStatus: async (id, status) => {
+                await fetch(`${API_URL}/admin/reservas/${id}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.adminToken}`
+                    },
+                    body: JSON.stringify({ estado: status })
+                });
+                admin.loadReservas();
+                ui.showToast(`Estado actualizado a: ${status}`);
+            },
+
+            addService: async () => {
+                const name = document.getElementById('new-serv-name').value;
+                const price = document.getElementById('new-serv-price').value;
+                const desc = document.getElementById('new-serv-desc').value;
+
+                if(!name || !price) return ui.showToast('Faltan datos');
+
+                await fetch(`${API_URL}/admin/servicios`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${state.adminToken}`
+                    },
+                    body: JSON.stringify({ nombre: name, precio: price, descripcion_detallada: desc, activo: true })
+                });
+                
+                ui.showToast('Servicio agregado');
+                app.fetchServices(); // Update public view
+                document.getElementById('new-serv-name').value = '';
+            },
+
+            loadServicesForAdmin: async () => {
+                const list = document.getElementById('admin-services-list');
+                list.innerHTML = state.services.map(s => `
+                    <li style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
+                        ${s.nombre} ($${s.precio})
+                        <button onclick="admin.deleteService(${s.id})" style="color:red; background:none;"><i class="fas fa-trash"></i></button>
+                    </li>
+                `).join('');
+            },
+
+            deleteService: async (id) => {
+                if(!confirm('¿Seguro?')) return;
+                await fetch(`${API_URL}/admin/servicios/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${state.adminToken}` }
+                });
+                admin.loadServicesForAdmin();
+                app.fetchServices();
+            },
+
+            saveConfig: async () => {
+                const address = document.getElementById('conf-address').value;
+                const title = document.getElementById('conf-title').value;
+                
+                // Enviar actualizaciones una a una (endpoint simple)
+                await fetch(`${API_URL}/admin/config`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.adminToken}` },
+                    body: JSON.stringify({ clave: 'direccion_salon', valor: address })
+                });
+                 await fetch(`${API_URL}/admin/config`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${state.adminToken}` },
+                    body: JSON.stringify({ clave: 'titulo', valor: title })
+                });
+                
+                ui.showToast('Configuración guardada');
+                app.fetchConfig();
+            }
+        };
+
+        // --- CHATBOT LOGIC ---
+        const chat = {
+            isOpen: false,
+            
+            toggle: () => {
+                chat.isOpen = !chat.isOpen;
+                document.getElementById('chat-window').style.display = chat.isOpen ? 'flex' : 'none';
+            },
+
+            handleEnter: (e) => {
+                if(e.key === 'Enter') chat.sendMessage();
+            },
+
+            sendMessage: async () => {
+                const input = document.getElementById('chat-input');
+                const msg = input.value.trim();
+                if (!msg) return;
+
+                chat.appendMsg(msg, 'user');
+                input.value = '';
+
+                try {
+                    const res = await fetch(`${API_URL}/chatbot`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: msg })
+                    });
+                    const data = await res.json();
+                    setTimeout(() => chat.appendMsg(data.reply, 'bot'), 600);
+                } catch (e) {
+                    setTimeout(() => chat.appendMsg('Lo siento, estoy desconectado temporalmente.', 'bot'), 600);
+                }
+            },
+
+            appendMsg: (text, type) => {
+                const container = document.getElementById('chat-messages');
+                const div = document.createElement('div');
+                div.className = `message ${type}-msg`;
+                div.innerText = text;
+                container.appendChild(div);
+                container.scrollTop = container.scrollHeight;
+            }
+        };
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', app.init);
+    </script>
+</body>
+</html>
